@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes fadeOutDown {
+      0% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+    }
+    .animated-welcome {
+      opacity: 0;
+      animation: fadeInUp 1s ease forwards;
+      animation-delay: 0.5s;
+    }
+    .disappear {
+      animation: fadeOutDown 1s ease forwards;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800">
+
+  <div id="welcomeBox" class="backdrop-blur-lg bg-white/10 p-8 rounded-2xl shadow-2xl w-full max-w-lg text-center">
+    <h1 id="welcomeMessage" class="text-4xl font-bold text-white drop-shadow-md animated-welcome">
+      Welcome to your Dashboard 🎉
+    </h1>
+    <p class="text-gray-300 mt-4" id="subMessage">
+      Glad to have you back! 🚀
+    </p>
+  </div>
+
+  <script>
+    // After 6 seconds, fade out the welcome box
+    setTimeout(() => {
+      const welcomeBox = document.getElementById("welcomeBox");
+      welcomeBox.classList.add("disappear");
+      setTimeout(() => {
+        welcomeBox.style.display = "none"; // hide completely after fade-out
+      }, 1000); // matches fadeOutDown duration
+    }, 6000); // stay visible for 6 sec
+  </script>
+</body>
+</html>
