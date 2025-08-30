@@ -1,0 +1,48 @@
+import mongoose from "mongoose";
+import bcrypt from 'bcrypt';
+import jwt from "jsonwebtoken";
+
+const registerSchema = new mongoose.Schema({
+    companyName: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    refreshToken:{type:String},
+});
+
+//Password hashing before saving the user
+registerSchema.pre('save', async function (next) {
+    if (this.isModified('password')) {
+         this.password = await bcrypt.hash(this.password, 10);
+    }
+    next();
+
+});
+
+//Method to compare password
+registerSchema.methods.isPasswordCorrect = async function (password) {
+    return await bcrypt.compare(password, this.password);
+}
+
+//Method to generate JWT token
+
+//Generate Access Token
+registerSchema.methods.generateAccessToken = function () {
+    return jwt.sign({ 
+        _id: this._id,
+        companyName: this.companyName,
+        email: this.email
+     }, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+    });
+}
+
+//Generate Refresh Token
+registerSchema.methods.generateRefreshToken = function () {
+    return jwt.sign({
+        _id: this._id,
+    }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: process.env.REFRESH_TOKEN_EXPIRY 
+    });
+}
+
+export const Register = mongoose.model('Register', registerSchema);
+
