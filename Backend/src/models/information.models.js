@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const InformationSchema = new mongoose.Schema({
     company:{type:mongoose.Schema.Types.ObjectId,ref:'Register',required:true},
     address: { type: String, required: true },
+    pancardId: { type: String , required: true, unique: true},
     phoneNumber: { type: String, required: true },
     owner: { type: String, required: true },
     license:{type:String,required:true,unique:true},
