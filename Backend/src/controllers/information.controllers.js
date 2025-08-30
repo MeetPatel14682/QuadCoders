@@ -1,15 +1,15 @@
 import mongoose from 'mongoose';
-import Information from '../models/information.models.js';
-import register from '../models/register.models.js';
+import {Information} from '../models/information.models.js';
+import {Register} from '../models/register.models.js';
 import asynchandler from '../utils/asynchandler.js';
 import  ApiError from '../utils/ApiError.js';
 import ApiResponse from '../utils/ApiResponse.js';
-
+import { Backend } from '../models/own_backend.models.js';
 
 // Create Information Controller
 const createInformation = asynchandler(async (req, res) => {
     const { address, phoneNumber, owner,
-      license, gstno, RazorpayId        , RazorpaySecret, taxId, } = req.body;
+      license, gstno, RazorpayId, RazorpaySecret, taxId, } = req.body;
     if (!address || !phoneNumber || !owner || !license || !gstno || !RazorpayId || !RazorpaySecret || !taxId) {
         return res.status(400).json(new ApiError(400, "All fields are required"));
     }
@@ -44,7 +44,7 @@ const getInformation = asynchandler(async (req, res) => {
 });
 
 const updateInformation = asynchandler(async (req, res) => {
-    const { id } = req.user?._id;
+    const { id } = req.user.id;
     const { address, phoneNumber, owner,
         license, gstno, RazorpayId, RazorpaySecret, taxId, } = req.body;
     if (!address && !phoneNumber && !owner && !license && !gstno && !RazorpayId && !RazorpaySecret && !taxId) {
@@ -63,8 +63,7 @@ const updateInformation = asynchandler(async (req, res) => {
     if (RazorpaySecret) info.RazorpaySecret = RazorpaySecret;
     if (taxId) info.taxId = taxId;
 
-    //TODO: Check if license, gstno, RazorpayId, RazorpaySecret, taxId are unique and it's is true
-
+   
 
     await info.save();
     await info.populate('company', 'companyName email -_id');

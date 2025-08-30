@@ -1,4 +1,4 @@
-import ApiError from '../error/ApiError.js';
+import ApiError from '../utils/ApiError.js';
 import ApiResponse from '../utils/ApiResponse.js';
 import asynchandler from '../utils/asynchandler.js';
 import { Status } from '../models/status.models.js';

@@ -1,6 +1,6 @@
 import { Router } from "express";
 const router=Router();
-import { getStatus, createStatus, updateAmount,changeMonthYear, updateCredits } from "../controllers/status.controllers.js";
+import { getStatus, createStatus,changeMonthYear, updateCredits } from "../controllers/status.controllers.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
 
 

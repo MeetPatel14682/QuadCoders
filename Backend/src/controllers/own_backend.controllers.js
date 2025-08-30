@@ -1,15 +1,14 @@
 import mongoose from "mongoose";
-import { Backend } from "../models/own_backend.models";
+import { Backend } from "../models/own_backend.models.js";
 import ApiResponse from '../utils/ApiResponse.js';
 import ApiError from '../utils/ApiError.js';
 import asynchandler from '../utils/asynchandler.js';
-import register from '../models/register.models.js';
 
 // Create Backend Controller
 const insertInformation = asynchandler(async (req, res) => {
-    const {company, address, phoneNumber, owner,
+    const {company, address, phoneNumber, owner,email,
         license, gstno, RazorpayId, RazorpaySecret, taxId, } = req.body;
-    if (!address || !phoneNumber || !owner || !license || !gstno || !RazorpayId || !RazorpaySecret || !taxId) {
+    if (!address || !email || !phoneNumber || !owner || !license || !gstno || !RazorpayId || !RazorpaySecret || !taxId) {
         return res.status(400).json(new ApiError(400, "All fields are required"));
     }
     const newBackend = new Backend({
@@ -18,6 +17,7 @@ const insertInformation = asynchandler(async (req, res) => {
         phoneNumber,
         owner,
         license,
+        email,
         gstno,
         RazorpayId,
         RazorpaySecret,

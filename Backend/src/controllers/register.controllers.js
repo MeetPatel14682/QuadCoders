@@ -1,8 +1,8 @@
-import ApiError from '../error/ApiError.js';
+import ApiError from '../utils/ApiError.js';
 import ApiResponse from '../utils/ApiResponse.js';
 import asynchandler from '../utils/asynchandler.js';
 import { Register } from '../models/register.models.js';
-
+import { Backend } from '../models/own_backend.models.js';
 
 //Genrarate Access Token
 const generateAccessToken =async (user) => {
@@ -38,6 +38,12 @@ const registerUser = asynchandler(async (req, res) => {
     if (password.length < 6) {
         return res.status(403).json(new ApiError(403, "Password must be at least 6 characters long"));
     }
+
+    //check  authentication
+    const entry=await Backend.findOne({company:companyName});
+    if(!entry){
+        return res.status(404).json(new ApiError(404,"No valid company register"));
+    }
     const existingUser = await Register.findOne({
         $or: [
             { email: email },
@@ -50,6 +56,7 @@ const registerUser = asynchandler(async (req, res) => {
     }
 
     const newUser = new Register({
+        id:entry._id,
         companyName,
         email,
         password
@@ -114,13 +121,27 @@ const logoutUser = asynchandler(async (req, res) => {
         json(new ApiResponse(200, {}, "User logged out successfully"));
 });
 
-const updatedUser = asyncHandler(async (req, res) => {
+const updatedUser =  asynchandler(async (req, res) => {
+    const {id}=req.user.id;
     const { companyName, email } = req.body;
 
     if (!companyName || !email) {
         return res.status(400).json(new ApiError(400, "Full name and email are required"));
     }
-    // Update user details
+      
+    const check=await Backend.findOne({id:id});
+    if(companyName && check.company!== companyName){
+        return res.status(402).json(new ApiError(402,"New company name doesn't  update in goverment database"))
+    }
+
+    if(email && check.findOne({email:email})){
+         return res.status(402).json(new ApiError(402,"New company email doesn't  update in goverment database"))
+    }
+     const entry= await Backend.findOne({company:companyName});
+    if(!entry){
+        return res.status(404).json(new ApiError(404,"No valid company register"));
+    }
+    
     const user = await Register.findByIdAndUpdate(req.user?._id, {
         $set: {
             companyName: companyName,
@@ -138,7 +159,7 @@ const updatedUser = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, user, "User details updated successfully"));
 })
 
-const changePassword = asyncHandler(async (req, res) => {
+const changePassword =  asynchandler(async (req, res) => {
     const { currentPassword, newPassword } = req.body;
 
     // Validate current password and new password

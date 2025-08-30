@@ -1,9 +1,10 @@
 import mongoose from "mongoose";
 
 const BackendSchema =  new mongoose.Schema({
-    company:{type:mongoose.Schema.Types.ObjectId,ref:'Register',required:true},
-    address: { type: String, required: true },
-    phoneNumber: { type: String, required: true },
+    company:{type:String,required:true,unique:true},
+    email:{type:String,required:true,unique:true},
+    address: { type: String, required: true},
+    phoneNumber: { type: String, required: true,unique:true},
     owner: { type: String, required: true },
     license:{type:String,required:true,unique:true},
     gstno:{type:String,required:true,unique:true},
