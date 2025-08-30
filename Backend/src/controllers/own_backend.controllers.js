@@ -6,6 +6,8 @@ import asynchandler from '../utils/asynchandler.js';
 
 // Create Backend Controller
 const insertInformation = asynchandler(async (req, res) => {
+
+    try{
     const {company, address, phoneNumber, owner,email,
         license, gstno, RazorpayId, RazorpaySecret, taxId, } = req.body;
     if (!address || !email || !phoneNumber || !owner || !license || !gstno || !RazorpayId || !RazorpaySecret || !taxId) {
@@ -26,6 +28,10 @@ const insertInformation = asynchandler(async (req, res) => {
     await newBackend.save();
     await newBackend.populate('company', 'companyName email -_id');
     res.status(201).json(new ApiResponse(201, "Information created successfully", newBackend));
+}catch(error){
+    console.error(`Error inserting information: ${error.message}`);
+    return res.status(500).json(new ApiError(500, "Server error: " + error.message));
+}
 });
 
 const getInformation = asynchandler(async (req, res) => {

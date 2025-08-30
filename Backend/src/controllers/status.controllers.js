@@ -4,9 +4,9 @@ import asynchandler from '../utils/asynchandler.js';
 import { Status } from '../models/status.models.js';
 
 const getStatus = asynchandler(async (req, res) => {
-
-    const {userId}=req.user?._id;
-    
+     console.log("User in getStatus:", req.user);
+    const userId=req.user?._id;
+     
     if(!userId){
         return res.status(400).json(new ApiError(400,"UserId is required"));
     }

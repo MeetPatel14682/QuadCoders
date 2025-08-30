@@ -29,9 +29,9 @@ app.use('/api/register',registers)
 
 //status routes
 import status from './routes/status.routes.js'
-app.use('/status',status)
+app.use('/api/status',status)
 
 //info routes
 import info from './routes/information.routes.js'
-app.use('/info',info)
+app.use('/api/info',info)
 export default app;

@@ -3,9 +3,10 @@ import ApiResponse from '../utils/ApiResponse.js';
 import asynchandler from '../utils/asynchandler.js';
 import { Register } from '../models/register.models.js';
 import { Backend } from '../models/own_backend.models.js';
-
+import jwt from 'jsonwebtoken';
+import { Status } from '../models/status.models.js';
 //Genrarate Access Token
-const generateAccessToken =async (user) => {
+const generateAccessTokenAndRefreshToken =async (user) => {
    const user1=await Register.findById(user._id);
 
    if(!user1) {
@@ -62,6 +63,8 @@ const registerUser = asynchandler(async (req, res) => {
         password
     });
     await newUser.save();
+    
+    
 
     return res.status(201).json(new ApiResponse(201, "User registered successfully", {companyName: newUser.companyName, email: newUser.email }));
 });
@@ -84,7 +87,7 @@ const loginUser = asynchandler(async (req, res) => {
     }
 
     //Generate Access Token and Refresh Token
-    const tokens = await generateAccessToken(user);
+    const tokens = await generateAccessTokenAndRefreshToken(user);
     if(!tokens) {
         return res.status(500).json(new ApiError(500,"Token generation failed"));
     }
@@ -99,7 +102,7 @@ const loginUser = asynchandler(async (req, res) => {
         return res
         .cookie('refreshToken', tokens.refreshToken, cookiesOptions)
         .cookie('accessToken', tokens.accessToken, cookiesOptions)
-        .status(200).json(new ApiResponse(200, {user: loggedInUser, accessToken: tokens.accessToken}, "Login successful"));
+        .status(200).json(new ApiResponse(200, {user: loggedInUser, accessToken: tokens.accessToken,refreshToken:tokens.refreshToken}, "Login successful"));
 })
 
 const logoutUser = asynchandler(async (req, res) => {
@@ -128,8 +131,12 @@ const updatedUser =  asynchandler(async (req, res) => {
     if (!companyName || !email) {
         return res.status(400).json(new ApiError(400, "Full name and email are required"));
     }
-      
     const check=await Backend.findOne({id:id});
+
+    if(!check){
+        return res.status(404).json(new ApiError(404,"No valid company register"));
+    }
+
     if(companyName && check.company!== companyName){
         return res.status(402).json(new ApiError(402,"New company name doesn't  update in goverment database"))
     }
@@ -191,13 +198,14 @@ const refreshTokenHandler = asynchandler(async (req, res) => {
     if (!refreshToken1) {
         return res.status(401).json(new ApiError(401, "Refresh token is required"));
     }
-    
+    console.log("Refresh Token received:", refreshToken1); // Log the token for debugging
    try {
         const decoded = jwt.verify(refreshToken1, process.env.REFRESH_TOKEN_SECRET);
         const user = await Register.findById(decoded._id) // Exclude password and refreshToken from the response
         if (!user) {
             return res.status(404).json(new ApiError(404, "User not found"));
-        }
+        } 
+        console.log("User found for refresh token:", user.refreshToken); // Log the user for debugging
 
         // Check if the refresh token matches the one stored in the user document
         if (user.refreshToken !== refreshToken1) {
@@ -218,6 +226,8 @@ const refreshTokenHandler = asynchandler(async (req, res) => {
     } catch (error) {
         return res.status(401).json(new ApiError(401, "Invalid refresh token"));
     }
-});
+}); 
 
-export { registerUser, loginUser, logoutUser, updatedUser, changePassword,refreshTokenHandler };
+
+
+export { registerUser, loginUser, logoutUser, updatedUser, changePassword,refreshTokenHandler };    

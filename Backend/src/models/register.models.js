@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 
 const registerSchema = new mongoose.Schema({
     id:{type: mongoose.Schema.Types.ObjectId, ref: 'Backend',required:true},
-    companyName: { type: String, required: true },
+    companyName: { type: String, required: true , unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     refreshToken:{type:String},

@@ -14,7 +14,7 @@ export const verifyJWT=asyncHandler(async (req,res,next)=>{ //If anything not pa
         return res.status(401).json(new ApiError(401, "Unauthorized access, token is missing"));
     }
         const decoded= jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-        const user=await Register.findById(decoded?._id).select("-password") //We add id in the decoded token, so we can use it to find the user in the database
+        const user=await Register.findById(decoded?._id).select("-password -refreshToken") //We add id in the decoded token, so we can use it to find the user in the database
         if(!user){
              return res.status(404).json(new ApiError(404, "User not found"));
         }
