@@ -1,0 +1,27 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#14b8a6"/>
+      <stop offset="100%" style="stop-color:#10b981"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Outer circle -->
+  <circle cx="20" cy="20" r="18" fill="url(#logoGradient)" opacity="0.1"/>
+  
+  <!-- Main leaf/chain link design -->
+  <path d="M12 20c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8-8-3.6-8-8z" fill="url(#logoGradient)" opacity="0.3"/>
+  
+  <!-- Inner design - stylized "V" -->
+  <path d="M15 14l5 8 5-8" stroke="url(#logoGradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  
+  <!-- Chain link elements -->
+  <circle cx="12" cy="12" r="2" fill="#14b8a6"/>
+  <circle cx="28" cy="12" r="2" fill="#10b981"/>
+  <circle cx="20" cy="28" r="2" fill="#059669"/>
+  
+  <!-- Connecting lines -->
+  <line x1="14" y1="13" x2="17" y2="16" stroke="#14b8a6" stroke-width="1.5" opacity="0.7"/>
+  <line x1="26" y1="13" x2="23" y2="16" stroke="#10b981" stroke-width="1.5" opacity="0.7"/>
+  <line x1="20" y1="26" x2="20" y2="24" stroke="#059669" stroke-width="1.5" opacity="0.7"/>
+</svg>
