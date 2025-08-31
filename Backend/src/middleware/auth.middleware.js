@@ -4,8 +4,7 @@ import jwt from "jsonwebtoken";
 import { Register } from "../models/register.models.js";
 //Create a middleware to verify JWT token and give the logged user details
 export const verifyJWT=asyncHandler(async (req,res,next)=>{ //If anything not passed in the request, we can use underscore as a placeholder
-    
-
+    console.log(req.header("Authorization"))
     try {
         const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", ""); // Get token from cookies or Authorization header
 

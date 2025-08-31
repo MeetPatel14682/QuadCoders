@@ -3,14 +3,21 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-
+import { useState, useEffect } from "react";
 export default function HomePage() {
   const router = useRouter();
+  const [AccessToken, setAccessToken] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    console.log(token)
+    setAccessToken(token);
+  }, []);
   return (
-    <div className="bg-gray-50 text-gray-800">
+    <div className="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
 
       {/* Hero Section */}
-      <section className="pt-24 pb-20 relative overflow-hidden bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 min-h-screen flex items-center">
+      <section className="pt-24 pb-20 relative overflow-hidden bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center flex-grow">
         <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -30,18 +37,39 @@ export default function HomePage() {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                href="/register"
-                className="px-8 py-4 bg-green-500 text-white rounded-full shadow-lg hover:bg-green-600 hover:scale-105 transition-all duration-300 text-center font-semibold"
-              >
-                Get Deep here
-              </Link>
-              <Link
-                href="/login"
-                className="px-8 py-4 border-2 border-green-500 text-green-600 rounded-full hover:bg-green-50 transition-all duration-300 text-center font-semibold"
-              >
-                Login here
-              </Link>
+              {AccessToken ? (
+                // Disabled Button (when logged in)
+                <button
+                  disabled
+                  className="px-8 py-4 bg-gray-300 text-gray-500 rounded-full shadow-lg cursor-not-allowed text-center font-semibold"
+                >
+                  Get Deep here
+                </button>
+              ) : (
+                // Active Link (when logged out)
+                <Link
+                  href="/register"
+                  className="px-8 py-4 bg-green-500 text-white rounded-full shadow-lg hover:bg-green-600 hover:scale-105 transition-all duration-300 text-center font-semibold"
+                >
+                  Get Deep here
+                </Link>
+              )}
+
+              {AccessToken ? (
+                <button
+                  disabled
+                  className="px-8 py-4 border-2 border-gray-300 text-gray-400 rounded-full cursor-not-allowed text-center font-semibold"
+                >
+                  Login here
+                </button>
+              ) : (
+                <Link
+                  href="/login"
+                  className="px-8 py-4 border-2 border-green-500 text-green-600 rounded-full hover:bg-green-50 transition-all duration-300 text-center font-semibold"
+                >
+                  Login here
+                </Link>
+              )}
             </div>
           </motion.div>
 
@@ -115,7 +143,7 @@ export default function HomePage() {
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8 mb-16">
-            {[ /* Register, Verify, Receive cards */ 
+            {[
               {
                 title: "Register",
                 text: "Companies producing green hydrogen fuel can easily register on our platform.",
@@ -196,7 +224,7 @@ export default function HomePage() {
       </section>
 
       {/* Why Green Hydrogen Section */}
-      <section className="py-20 bg-gradient-to-r from-emerald-50 to-green-50">
+      <section className="py-20 bg-gradient-to-r from-emerald-50 to-green-50 flex-grow">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -261,18 +289,31 @@ export default function HomePage() {
                   hydrogen production.
                 </p>
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => router.push("/register")}
-                  className="px-8 py-3 bg-white text-green-600 rounded-full font-semibold hover:bg-gray-100 transition-colors"
+                  disabled={!!AccessToken} // disable if token exists
+                  whileHover={!AccessToken ? { scale: 1.05 } : {}} // only animate if not disabled
+                  whileTap={!AccessToken ? { scale: 0.95 } : {}}
+                  onClick={() => !AccessToken && router.push("/register")} // prevent click if token exists
+                  className={`px-8 py-3 rounded-full font-semibold transition-colors
+    ${AccessToken
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed" // disabled look
+                      : "bg-white text-green-600 hover:bg-gray-100" // active look
+                    }`}
                 >
                   Start Here
                 </motion.button>
+
               </div>
             </motion.div>
           </div>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="px-8 py-3 bg-white text-green-600 rounded-full font-semibold hover:bg-gray-100 transition-colors">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <p className="text-lg font-semibold">© 2025 VerdeChain. All rights reserved.</p>
+        </div>
+      </footer>
     </div>
   );
 }

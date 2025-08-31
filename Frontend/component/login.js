@@ -1,21 +1,72 @@
-// app/login/page.jsx  (for Next.js 13+ App Router)
+// app/login/page.jsx
 "use client";
 
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 export default function Login() {
   const router = useRouter();
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic here...
-    console.log("Login submitted ✅");
-    router.push("/dashboard"); // Example redirect
+    try {
+      console.log("Backend URL:", process.env.NEXT_PUBLIC_URL);
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/register/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(form),
+        }
+      );
+
+      const data = await res.json();
+      console.log("Login response:", data);
+
+      if (!res.ok) {
+        toast.error(data.message || "Something went wrong");
+      } else {
+        // store access token properly
+        if (data.accessToken) {
+          localStorage.setItem("accessToken", data.accessToken);
+        } else if (data.message?.accessToken) {
+          localStorage.setItem("accessToken", data.message.accessToken);
+        }
+
+        console.log(
+          "Access Token saved: ",
+          localStorage.getItem("accessToken")
+        );
+        window.location.href="/details"
+        
+      }
+    } catch (error) {
+      console.log("Token in localStorage:", localStorage.getItem("accessToken"));
+      toast.error(error.message);
+    }
   };
 
   return (
     <div className="bg-gradient-to-br from-teal-50 to-emerald-100 min-h-screen flex items-center justify-center">
+      <ToastContainer/>
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
@@ -37,22 +88,6 @@ export default function Login() {
         <form onSubmit={handleSubmit} className="space-y-3">
           <div>
             <label
-              htmlFor="companyName"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Company Name
-            </label>
-            <input
-              type="text"
-              id="companyName"
-              name="companyName"
-              required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-            />
-          </div>
-
-          <div>
-            <label
               htmlFor="email"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
@@ -63,6 +98,8 @@ export default function Login() {
               id="email"
               name="email"
               required
+              value={form.email}
+              onChange={handleChange}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             />
           </div>
@@ -79,6 +116,8 @@ export default function Login() {
               id="password"
               name="password"
               required
+              value={form.password}
+              onChange={handleChange}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             />
           </div>

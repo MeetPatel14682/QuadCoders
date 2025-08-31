@@ -1,9 +1,10 @@
 import React from 'react'
-import Login from '@/component/login.js'
+import DashboardPage from '@/component/details.js'
+
 const login = () => {
   return (
     <div>
-      <Login/>
+      <DashboardPage/>
     </div>
   )
 }

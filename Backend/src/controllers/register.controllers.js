@@ -55,7 +55,8 @@ const registerUser = asynchandler(async (req, res) => {
     if (existingUser) {
         return res.status(409).json(new ApiError(409, "User with this email already exists"));
     }
-
+    
+    
     const newUser = new Register({
         id:entry._id,
         companyName,
@@ -63,10 +64,27 @@ const registerUser = asynchandler(async (req, res) => {
         password
     });
     await newUser.save();
+     //Generate access token and refresh token
+     const user1=await Register.findOne({companyName:companyName});
+     if(!user1){
+        return res.status(404).json(new ApiError(404,"No valid company register"));
+     }
+    const tokens = await generateAccessTokenAndRefreshToken(user1);
+    if(!tokens) {
+        return res.status(500).json(new ApiError(500,"Token generation failed"));
+    }
     
-    
+    const user = await Register.findById(newUser._id).select('-password -refreshToken');
 
-    return res.status(201).json(new ApiResponse(201, "User registered successfully", {companyName: newUser.companyName, email: newUser.email }));
+    const cookiesOptions = {
+        httpOnly: true,
+        secure: true, // Set to true in production
+        };
+
+        return res
+        .cookie('refreshToken', tokens.refreshToken, cookiesOptions)
+        .cookie('accessToken', tokens.accessToken, cookiesOptions)
+        .status(201).json(new ApiResponse(201, {user: user, accessToken: tokens.accessToken,refreshToken:tokens.refreshToken}, "User registered successfully"));
 });
 
 

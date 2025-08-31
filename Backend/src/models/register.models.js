@@ -9,6 +9,12 @@ const registerSchema = new mongoose.Schema({
     password: { type: String, required: true },
     refreshToken:{type:String},
 });
+registerSchema.virtual("information", {
+  ref: "Information",        // Model to populate
+  localField: "_id",         // Field in Register
+  foreignField: "company",   // Field in Information that references Register
+  justOne: true              // Return single document
+});
 
 //Password hashing before saving the user
 registerSchema.pre('save', async function (next) {

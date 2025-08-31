@@ -9,10 +9,19 @@
     "type": "module"
   },
   "dependencies": {
+    "axios": "^1.11.0",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
     "framer-motion": "^12.23.12",
+    "mongoose": "^8.18.0",
     "next": "15.5.2",
+    "razorpay": "^2.9.6",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "react-toastify": "^11.0.5",
+    "recharts": "^3.1.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

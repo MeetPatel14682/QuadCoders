@@ -8,15 +8,16 @@ import { Backend } from '../models/own_backend.models.js';
 import { Status } from '../models/status.models.js';
 // Create Information Controller
 const createInformation = asynchandler(async (req, res) => {
-    const { address, phoneNumber, owner, pancardId,
+    const { address, phoneNumber, owner, pancardId,CIN,
       license, gstno, RazorpayId, RazorpaySecret, taxId} = req.body;
-    if (!address || !phoneNumber || !owner || !license || !pancardId || !gstno || !RazorpayId || !RazorpaySecret || !taxId) {
+    if (!address ||!CIN || !phoneNumber || !owner || !license || !pancardId || !gstno || !RazorpayId || !RazorpaySecret || !taxId) {
         return res.status(400).json(new ApiError(400, "All fields are required"));
     }
 
     const newInfo = new Information({
         company: req.user._id,
         address,
+        CIN,
         phoneNumber,
         pancardId,
         owner,
@@ -33,7 +34,7 @@ const createInformation = asynchandler(async (req, res) => {
         return res.status(404).json(new ApiError(404,"No valid company register"));
     }
    console.log("Backend info:", info);
-    if(license!==info.license || gstno!==info.gstno || RazorpayId!==info.RazorpayId || RazorpaySecret!==info.RazorpaySecret|| pancardId !== info.pancardId || taxId!==info.taxId || address!==info.address || phoneNumber!==info.phoneNumber){
+    if(license!==info.license || gstno!==info.gstno || RazorpayId!==info.RazorpayId || RazorpaySecret!==info.RazorpaySecret|| pancardId !== info.pancardId || taxId!==info.taxId || address!==info.address || phoneNumber!==info.phoneNumber || owner!==info.owner || CIN !== info.CIN){
         return res.status(400).json(new ApiError(400,"Details must be same as own_backend details"));
     }
 
@@ -42,7 +43,7 @@ const createInformation = asynchandler(async (req, res) => {
     await newInfo.save();
      //Add status entry for new user
         const status=new Status({
-            userId:req.user._id,
+            userId:req.user.id,
             credits:0,
             month: new Date().getMonth() + 1,
             year: new Date().getFullYear()
@@ -65,7 +66,7 @@ const getInformation = asynchandler(async (req, res) => {
 const updateInformation = asynchandler(async (req, res) => {
     const { address, phoneNumber, owner,
         license, gstno, pancardId, RazorpayId, RazorpaySecret, taxId, } = req.body;
-    if (!address && !phoneNumber && !owner && !license && !gstno && !RazorpayId && !RazorpaySecret && !taxId && !pancardId) {
+    if (!address && !phoneNumber && !owner && !license && !gstno && !RazorpayId && !RazorpaySecret && !taxId && !pancardId && !CIN) {
         return res.status(400).json(new ApiError(400, "At least one field is required to update"));
     }
      
@@ -90,9 +91,11 @@ const updateInformation = asynchandler(async (req, res) => {
     if (RazorpaySecret) user.RazorpaySecret = RazorpaySecret;
     if (taxId) user.taxId = taxId;
     if (pancardId) user.pancardId = pancardId;
+    if (CIN) user.CIN = CIN;
 
     //check this detail is same as own_backend details
-    if(license!==entry.license || gstno!==entry.gstno || RazorpayId!==entry.RazorpayId || RazorpaySecret!==entry.RazorpaySecret || taxId!==entry.taxId || address!==entry.address || phoneNumber!==entry.phoneNumber || pancardId !== entry.pancardId){
+    if(license!==entry.license || gstno!==entry.gstno || RazorpayId!==entry.RazorpayId || RazorpaySecret!==entry.RazorpaySecret || taxId!==entry.taxId || address!==entry.address || phoneNumber!==entry.phoneNumber || pancardId !== entry.pancardId || owner!==entry.owner || CIN !== entry.CIN   
+    ){
         return res.status(400).json(new ApiError(400,"Details must be same as own_backend details"));
     }
 

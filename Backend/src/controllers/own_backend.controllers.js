@@ -7,10 +7,9 @@ import asynchandler from '../utils/asynchandler.js';
 // Create Backend Controller
 const insertInformation = asynchandler(async (req, res) => {
 
-    try{
-    const {company, address, phoneNumber, owner,email,
-        license, gstno, RazorpayId, RazorpaySecret, taxId, } = req.body;
-    if (!address || !email || !phoneNumber || !owner || !license || !gstno || !RazorpayId || !RazorpaySecret || !taxId) {
+    const {company, address, phoneNumber, owner, email,
+        license, gstno, pancardId, RazorpayId, RazorpaySecret, taxId, CIN} = req.body;
+    if (!address || !email || !phoneNumber || !owner || !license || !gstno || !RazorpayId || !RazorpaySecret || !taxId || !CIN || !pancardId) {
         return res.status(400).json(new ApiError(400, "All fields are required"));
     }
     const newBackend = new Backend({
@@ -21,17 +20,16 @@ const insertInformation = asynchandler(async (req, res) => {
         license,
         email,
         gstno,
+        pancardId,
         RazorpayId,
         RazorpaySecret,
         taxId,
+        CIN
     });
     await newBackend.save();
     await newBackend.populate('company', 'companyName email -_id');
     res.status(201).json(new ApiResponse(201, "Information created successfully", newBackend));
-}catch(error){
-    console.error(`Error inserting information: ${error.message}`);
-    return res.status(500).json(new ApiError(500, "Server error: " + error.message));
-}
+
 });
 
 const getInformation = asynchandler(async (req, res) => {
@@ -46,7 +44,7 @@ const getInformation = asynchandler(async (req, res) => {
 const updateInformation = asynchandler(async (req, res) => {
     const { id } = req.user?._id;
     const { address, phoneNumber, owner,
-        license, gstno, RazorpayId, RazorpaySecret, taxId, } = req.body;
+        license, gstno, RazorpayId, RazorpaySecret, taxId, CIN} = req.body;
     if (!address && !phoneNumber && !owner && !license && !gstno && !RazorpayId && !RazorpaySecret && !taxId) {
         return res.status(400).json(new ApiError(400, "At least one field is required to update"));
     }   

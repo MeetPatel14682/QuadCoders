@@ -4,7 +4,9 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config({ path: './.env' });
 const app = express();
+import mongoose from 'mongoose';
 
+dotenv.config();
 app.use(cors({
     origin:process.env.CORS_ORIGIN || 'http://localhost:3000',
     credentials: true,
@@ -34,4 +36,8 @@ app.use('/api/status',status)
 //info routes
 import info from './routes/information.routes.js'
 app.use('/api/info',info)
+
+//payment routes
+import payment from './routes/payment.routes.js'
+app.use('/api/payment',payment)
 export default app;

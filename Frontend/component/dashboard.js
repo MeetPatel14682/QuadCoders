@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 export default function Dashboard() {
   const [history, setHistory] = useState([]);
   const [status, setStatus] = useState([]);
-
+  
   useEffect(() => {
     async function fetchData() {
       try {

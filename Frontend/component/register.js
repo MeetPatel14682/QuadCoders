@@ -5,14 +5,14 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Import the default styles
 
 export default function RegisterPage() {
   const router = useRouter();
   const [form, setForm] = useState({
     companyName: "",
     email: "",
-    phone: "",
-    companyType: "",
     password: "",
     confirmPassword: "",
     terms: false,
@@ -26,15 +26,54 @@ export default function RegisterPage() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: Add API call here
-    console.log("Form Submitted:", form);
-    router.push("/verification"); // redirect to login after registration
+
+    if (form.password !== form.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    if (!form.terms) {
+      alert("You must agree to the terms and conditions");
+      return;
+    }
+
+    try {
+      console.log(process.env.NEXT_PUBLIC_URL);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/register/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+      console.log(data)
+      if (!res.ok) {
+        toast.error(data.message || "Something went wrong"); // show backend error
+      } else {
+
+        if (data.accessToken) {
+          localStorage.setItem("accessToken", data.accessToken);
+        } else if (data.message?.accessToken) {
+          localStorage.setItem("accessToken", data.message.accessToken);
+        }
+
+        console.log("Access Token: ", localStorage.getItem('accessToken'))
+        router.push("/verification");
+      }
+    } catch (error) {
+
+      console.log("Token in localStorage:", localStorage.getItem("accessToken"));
+      toast.error(error.message);
+    }
   };
 
   return (
     <div className="bg-gradient-to-br from-teal-50 to-emerald-100 min-h-screen flex items-center justify-center py-12">
+      <ToastContainer />
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
@@ -82,39 +121,6 @@ export default function RegisterPage() {
               required
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Phone Number
-            </label>
-            <input
-              type="tel"
-              name="phone"
-              value={form.phone}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Company Type
-            </label>
-            <select
-              name="companyType"
-              value={form.companyType}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-            >
-              <option value="">Select company type</option>
-              <option value="producer">Green Hydrogen Producer</option>
-              <option value="distributor">Fuel Distributor</option>
-              <option value="technology">Technology Provider</option>
-              <option value="research">Research Organization</option>
-            </select>
           </div>
 
           <div>

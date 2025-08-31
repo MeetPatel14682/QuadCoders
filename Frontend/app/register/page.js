@@ -1,5 +1,5 @@
 import React from 'react'
-import RegisterPage from '@/Frontend/component/register.js'
+import RegisterPage from '@/component/register.js'
 const page = () => {
   return (
     <div>

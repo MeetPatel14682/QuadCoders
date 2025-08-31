@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const InformationSchema = new mongoose.Schema({
     company:{type:mongoose.Schema.Types.ObjectId,ref:'Register',required:true},
+    CIN:{type:String, required:true, unique:true},
     address: { type: String, required: true },
     pancardId: { type: String , required: true, unique: true},
     phoneNumber: { type: String, required: true },

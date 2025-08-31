@@ -1,6 +1,5 @@
 import "./globals.css";
-import Navbar from "@/Frontend/component/Navbar.js";
-
+import Navbar from "@/component/Navbar.js";
 export const metadata = {
   title: "My App",
   description: "Next.js App with TailwindCSS",
