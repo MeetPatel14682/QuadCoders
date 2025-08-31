@@ -6,9 +6,9 @@ import mongoose from 'mongoose';
 
 
 const createHistory = asynchandler(async (req, res) => {
-    const { userId, produceCount, amount } = req.body;
-
-    if (!userId || !produceCount || !amount) {
+    const { userId, produceCount, amount,company } = req.body;
+    console.log("Request body:", userId, produceCount, amount);
+    if (!userId || !produceCount || !amount || !company) {
         return res.status(400).json(new ApiError(400, "All fields are required"));
     }
     if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -17,6 +17,7 @@ const createHistory = asynchandler(async (req, res) => {
 
     const newHistory = new History({
         userId,
+        company,
         produceCount,
         amount
     });

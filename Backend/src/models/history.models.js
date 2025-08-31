@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const HistorySchema = new mongoose.Schema({
 
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Backend', required: true },
+    company: { type:String, required: true },
     produceCount: { type: Number, required: true }, //In Tone
     amount: { type: Number, required: true}
     

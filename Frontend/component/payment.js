@@ -71,9 +71,7 @@ const DynamicRazorpayPayment = () => {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/status`);
         const data=await response.json()
-        console.log("DATa: ",data)
-        setstatus(data);
-        console.log("Status data:", response.data);
+        setstatus(data.data);
       } catch (error) {
         console.error("Error fetching status:", error);
       }
@@ -81,11 +79,45 @@ const DynamicRazorpayPayment = () => {
     fetchStatus();
   },[])
 
-  const updatedstatus = status.filter(async (item)=> cont update=await fetch(`${process.env.NEXT_PUBLIC_URL}/register/${item.userId._id}`);
-     const data2=await update.json();
-     console.log("Data2: ",data2)
-     return data2.information.RazorpayId && data2.information.RazorpaySecret
-    )
+  
+  useEffect(() => {
+    console.log("Status updated:", status);
+  const saveStatusHistory = async () => {
+    if (!status || status.length === 0) {
+      console.log("No status to save");
+      return;
+    }
+    try {
+      const updatedStatus = await Promise.all(
+        status.map(async (item) => {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/history/`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId: item.userId._id,
+                company:item.userId.company,
+              produceCount: item.credits,
+              amount: item.amount || 10,
+            }),
+          });
+
+          const data = await response.json();
+          console.log("Data saved:", data);
+
+          return data.information?.RazorpayId && data.information?.RazorpaySecret;
+        })
+      );
+
+      console.log("Updated status results:", updatedStatus);
+    } catch (err) {
+      console.error("Error saving status history:", err);
+    }
+  };
+
+  saveStatusHistory();
+}, [status]);
+
+
   return (
     <div>
       <h1>Dynamic Razorpay Payment</h1>
