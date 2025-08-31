@@ -28,7 +28,7 @@ const createHistory = asynchandler(async (req, res) => {
 })
 const getHistory = asynchandler(async (req, res) => {
      
-     const history=await History.find().populate('userId', 'companyName email -_id').sort({ createdAt: -1 });
+     const history=await History.find().populate('userId', 'company email -_id').sort({ createdAt: -1 });
 
      if(!history) {
         return  res.status(404).json(new ApiError(404,"No history found"));
@@ -38,7 +38,6 @@ const getHistory = asynchandler(async (req, res) => {
 })
 
 const getHistoryByUserId = asynchandler(async (req, res) => {
-     
      const { userId } = req.params;
      if(!userId || !mongoose.Types.ObjectId.isValid(userId)) {
         return res.status(400).json(new ApiError(400,"Invalid userId"));

@@ -13,7 +13,7 @@ const createInformation = asynchandler(async (req, res) => {
     if (!address ||!CIN || !phoneNumber || !owner || !license || !pancardId || !gstno || !RazorpayId || !RazorpaySecret || !taxId) {
         return res.status(400).json(new ApiError(400, "All fields are required"));
     }
-
+   console.log("Request user:", req.user);
     const newInfo = new Information({
         company: req.user._id,
         address,

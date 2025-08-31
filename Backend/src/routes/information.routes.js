@@ -5,7 +5,7 @@ import { createInformation,
   deleteInformation, } from "../controllers/information.controllers.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
 const router = Router();
-
+router.use(verifyJWT);
 router.route('/information').post(createInformation);
 router.route('/information/:license').get(getInformation);
 router.route('/information/:license').patch(updateInformation);
