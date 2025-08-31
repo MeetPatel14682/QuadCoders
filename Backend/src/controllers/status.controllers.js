@@ -87,4 +87,51 @@ const changeMonthYear = asynchandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, "Month and Year updated successfully", status));
 })
 
-export { getStatus, createStatus, updateCredits, changeMonthYear };
+// A function to fetch the top ten users based on credits
+const getTopTenUsers = asynchandler(async (req, res) => {
+    const topUsers = await Status.find()
+        .sort({ credits: -1 }) // Sort by credits in descending order
+        .limit(10) // Limit to top 10 users
+        .populate('userId', 'company email -_id'); // Populate user details
+
+    if (!topUsers || topUsers.length === 0) {
+        return res.status(404).json(new ApiError(404, "No users found"));
+    }
+
+    return res.status(200).json(new ApiResponse(200, "Top ten users fetched successfully", topUsers));
+});
+
+// A function to fetch the top ten users based on credits every month
+const getMonthlyTopTenUsers = asynchandler(async (req, res) => {
+    const currentMonth = new Date().getMonth() + 1; // JavaScript months are 0-11
+    const currentYear = new Date().getFullYear();
+
+    const topUsers = await Status.find({ month: currentMonth, year: currentYear })
+        .sort({ credits: -1 }) // Sort by credits in descending order
+        .limit(10) // Limit to top 10 users
+        .populate('userId', 'company email -_id'); // Populate user details
+
+    if (!topUsers || topUsers.length === 0) {
+        return res.status(404).json(new ApiError(404, "No users found for the current month"));
+    }
+
+    return res.status(200).json(new ApiResponse(200, "Monthly top ten users fetched successfully", topUsers));
+});
+
+// A function to fetch the top ten users based on credits every year
+const getYearlyTopTenUsers = asynchandler(async (req, res) => {
+    const currentYear = new Date().getFullYear();
+
+    const topUsers = await Status.find({ year: currentYear })
+        .sort({ credits: -1 }) // Sort by credits in descending order
+        .limit(10) // Limit to top 10 users
+        .populate('userId', 'company email -_id'); // Populate user details
+
+    if (!topUsers || topUsers.length === 0) {
+        return res.status(404).json(new ApiError(404, "No users found for the current year"));
+    }
+
+    return res.status(200).json(new ApiResponse(200, "Yearly top ten users fetched successfully", topUsers));
+});
+
+export { getStatus, createStatus, updateCredits, changeMonthYear, getTopTenUsers, getMonthlyTopTenUsers, getYearlyTopTenUsers };
