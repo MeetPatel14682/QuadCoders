@@ -203,7 +203,7 @@ Maintainers (as listed in repository contributors):
 * Meet Patel
 * Het421
 * MeghBavarva
-* (others listed in GitHub contributors)
+* Harshil
 
 For project-related queries, open an Issue or contact the maintainers via the address listed in the project or the team coordinator.
 
