@@ -215,17 +215,3 @@ For project-related queries, open an Issue or contact the maintainers via the ad
 * Acknowledge third-party libraries, learning resources, and any mentors / evaluators that contributed to the project.
 
 ---
-
-## Next recommended steps (for maintainers)
-
-1. Add an up-to-date `README.md` to the repository root (this document).
-2. Add `env.example` files in both `Backend/` and `Frontend/` showing required env variables.
-3. Add `CONTRIBUTING.md` and `CODE_OF_CONDUCT.md` for open collaboration.
-4. Implement CI workflows to run lint/build/test on PRs.
-5. Add automated deployment pipelines for both frontend and backend.
-
----
-
-*Last updated: August 31, 2025*
-
-*This README was created programmatically on request and is intended to be reviewed and adjusted to match exact scripts, PKG managers, and environment details found in the repository's `package.json` files.*
